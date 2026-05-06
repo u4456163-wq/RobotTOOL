@@ -87,8 +87,8 @@ URDF → Parser → DH Parameters → Transformation Matrices → Output
 ## 📦 Installation
 
 ```bash
-git clone https://github.com/your_repo
-cd robotcad
+git clone https://github.com/u4456163-wq/RobotTOOL
+cd robot_tool
 pip install -r requirements.txt
 ```
 
