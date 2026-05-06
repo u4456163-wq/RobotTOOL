@@ -1,4 +1,4 @@
-# RobotTOOL
+# RoboTOOL
 # 🤖 RobotCAD – Kinematic Analysis Tool
 
 A lightweight toolchain for robotic modeling and forward kinematics, designed to bridge the gap between URDF design and simulation-ready transformations.
@@ -88,7 +88,7 @@ URDF → Parser → DH Parameters → Transformation Matrices → Output
 
 ```bash
 git clone https://github.com/u4456163-wq/RobotTOOL
-cd robot_tool
+cd robotool
 pip install -r requirements.txt
 ```
 
