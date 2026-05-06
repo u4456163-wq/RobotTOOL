@@ -2,6 +2,7 @@ import sys
 from urdf_parser import URDFParser
 from kinematics import forward_kinematics 
 import numpy as np
+np.set_printoptions(suppress=True, precision=4)
 
 def main():
     if len(sys.argv) < 2:
