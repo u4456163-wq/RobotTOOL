@@ -1,4 +1,4 @@
-# RoboTOOL
+# RoboTooL
 # 🤖 RobotCAD – Kinematic Analysis Tool
 
 A lightweight toolchain for robotic modeling and forward kinematics, designed to bridge the gap between URDF design and simulation-ready transformations.
