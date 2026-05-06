@@ -6,14 +6,14 @@ import numpy as np
 # 1. Definición de Estructuras de Datos
 @dataclass
 class URDFElement:
-    """Clase base para cualquier componente del URDF"""
+    """Base class for any URDF component"""
     name: str
     origin_xyz: Tuple[float, float, float] = (0.0, 0.0, 0.0)
     origin_rpy: Tuple[float, float, float] = (0.0, 0.0, 0.0)
 
 @dataclass
 class Link(URDFElement):
-    """Hereda de ElementoRobot y añade propiedades físicas"""
+    """Represents a physical link with inertia and visual properties"""
     name: str
     mass: float = 0.0
     inertia: dict = field(default_factory=dict)
@@ -25,8 +25,8 @@ class Link(URDFElement):
 
 @dataclass
 class Joint(URDFElement):
-    """Hereda de ElementoRobot y añade propiedades específicas de las articulaciones"""""
-    type: str = "revolute"  # revolute, prismatic, fixed, etc.
+    """Represents a joint connecting two links."""
+    type: str = "revolute"
     parent: str = ""
     child: str = ""
     axis: Tuple[float, float, float] = (0.0, 0.0, 1.0)

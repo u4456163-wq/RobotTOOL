@@ -5,19 +5,23 @@ from models import Robot, Link, Joint
 class URDFParser:
     @staticmethod
     def string_to_tuple(s: str) -> Tuple [float, float, float]:
+        """Converts a space-separated string of numbers into a float tuple."""
         return tuple(map(float, s.split())) if s else (0.0, 0.0, 0.0)
     
     def parse(self, file_path: str) -> Robot:
+        """Parses a URDF file and return a Robot object model."""
         tree = ET.parse(file_path)
         root = tree.getroot()
 
         robot = Robot(name=root.get("name", "Robot"))
 
+        # Parse Links
         for link_tag in root.findall("link"):
             robot.links.append(
                 Link(name=link_tag.get("name"))
             )
 
+        # Parse Joints
         for joint_tag in root.findall("joint"):
             origin = joint_tag.find("origin")
             xyz = self.string_to_tuple(origin.get("xyz")) if origin is not None else (0.0, 0.0, 0.0)
