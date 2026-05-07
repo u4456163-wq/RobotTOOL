@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Dict
 import xml.etree.ElementTree as ET
 import numpy as np 
 
@@ -16,11 +16,11 @@ class Link(URDFElement):
     """Represents a physical link with inertia and visual properties"""
     name: str
     mass: float = 0.0
-    inertia: dict = field(default_factory=dict)
+    inertia: Dict[str, float] = field(default_factory=dict)
     collision_mesh_path: str = ""
     visual_mesh_path: str = ""
     center_of_mass: Tuple[float, float, float] = (0.0, 0.0, 0.0)
-    material: dict = field(default_factory=dict)
+    material: Dict[str, Any] = field(default_factory=dict)
 
 @dataclass
 class Joint(URDFElement):
