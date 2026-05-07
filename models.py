@@ -3,7 +3,7 @@ from typing import List, Optional, Tuple
 import xml.etree.ElementTree as ET
 import numpy as np 
 
-# 1. Definición de Estructuras de Datos
+# Data Structure Definitions.
 @dataclass
 class URDFElement:
     """Base class for any URDF component"""
@@ -17,7 +17,6 @@ class Link(URDFElement):
     name: str
     mass: float = 0.0
     inertia: dict = field(default_factory=dict)
-    mesh_path: str = ""
     collision_mesh_path: str = ""
     visual_mesh_path: str = ""
     center_of_mass: Tuple[float, float, float] = (0.0, 0.0, 0.0)
