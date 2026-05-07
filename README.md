@@ -84,6 +84,19 @@ URDF → Parser → DH Parameters → Transformation Matrices → Output
 
 ---
 
+## 🎯 Use Cases
+
+This tool is designed for:
+
+* Extracting homogeneous transformation matrices from URDF-defined robot poses
+* Verifying robot kinematic chains before simulation 
+* Debugging URDF exports and robot configurations
+* Lightweight forward kinematics analysis 
+* Educational and research workflows 
+* Integration into custom robotics pipelines 
+
+---
+
 ## 📦 Installation
 
 ```bash
