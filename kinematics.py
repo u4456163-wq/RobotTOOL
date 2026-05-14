@@ -27,14 +27,29 @@ def joint_to_matrix(joint: Joint) -> np.ndarray:
     T[:3, 3] = [x, y, z]
     return T
     
-def forward_kinematics(robot: Robot) -> np.ndarray:
+def forward_kinematics_full(robot: Robot, q: np.ndarray) -> List[np.ndarray]:
+    """
+    Computes all transformation matrices along the kinematic chain for a given joint configuration.
+    """
+    all_transforms = [np.eye(4)]  # Start with the base transformation
+
+    for i, joint in enumerate(robot.joints):
+        T_joint = joint_to_matrix(joint)
+        # Apply the joint transformation based on its type and angle
+        if joint.type == "revolute":
+            # Example for revolute joint (simplified)
+            pass
+        elif joint.type == "prismatic":
+            # Example for prismatic joint (simplified)
+            pass
+        all_transforms.append(all_transforms[-1] @ T_joint)
+
+    return all_transforms
+
+def forward_kinematics(robot: Robot, q: np.ndarray) -> np.ndarray:
     """
     Computes the final transformation matrix by multiplying all joint transformations.
     Currently assumes a serial chain in the order defined in the URDF.
     """
-    T_total = np.eye(4)
-
-    for joint in robot.joints:
-        T_total = T_total @ joint_to_matrix(joint)
-
-    return T_total
+    all_transforms = forward_kinematics_full(robot, q)
+    return all_transforms[-1]

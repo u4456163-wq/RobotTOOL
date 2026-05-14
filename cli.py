@@ -1,6 +1,7 @@
 import sys
 from urdf_parser import URDFParser
 from kinematics import forward_kinematics 
+from jacobians import compute_jacobian
 import numpy as np
 
 # Set numpy printing to be more readable
@@ -16,10 +17,14 @@ def main():
     parser = URDFParser()
     robot = parser.parse(file_path)
 
-    fk_result = forward_kinematics(robot)
+    fk_result = forward_kinematics(robot, np.zeros(len(robot.joints)))
+    q = np.zeros(len(robot.joints))
+    jacobians = compute_jacobian(robot, q)
 
     print("Forward Kinematics Result (Transformation Matrix):")
     print(fk_result)
+    print("\nJacobians:")
+    print(jacobians)
 
 if __name__ == "__main__":
     main()
