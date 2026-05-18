@@ -25,7 +25,7 @@ class Link(URDFElement):
 @dataclass
 class Joint(URDFElement):
     """Represents a joint connecting two links."""
-    type: str = "revolute"
+    joint_type: str = "fixed"  # 'revolute', 'prismatic', 'continuous', 'fixed'
     parent: str = ""
     child: str = ""
     axis: Tuple[float, float, float] = (0.0, 0.0, 1.0)

@@ -27,22 +27,46 @@ def joint_to_matrix(joint: Joint) -> np.ndarray:
     T[:3, 3] = [x, y, z]
     return T
     
-def forward_kinematics_full(robot: Robot, q: np.ndarray) -> List[np.ndarray]:
+def compute_forward_kinematics_full(robot: Robot, q: np.ndarray) -> List[np.ndarray]:
     """
-    Computes all transformation matrices along the kinematic chain for a given joint configuration.
+    Computes all transformation matrices along the kinematic chain.
     """
-    all_transforms = [np.eye(4)]  # Start with the base transformation
+    all_transforms = [np.eye(4)]  # Base (World / Link 0)
+    q_idx = 0  # Index for the joint angles in q
 
-    for i, joint in enumerate(robot.joints):
-        T_joint = joint_to_matrix(joint)
-        # Apply the joint transformation based on its type and angle
-        if joint.type == "revolute":
-            # Example for revolute joint (simplified)
-            pass
-        elif joint.type == "prismatic":
-            # Example for prismatic joint (simplified)
-            pass
-        all_transforms.append(all_transforms[-1] @ T_joint)
+    for joint in robot.joints:
+        # 1. Fixed transformation matrix of the origin of the joint (of the URDF)
+        T_urdf = joint_to_matrix(joint)
+        
+        # 2. Internal motion matrix of the joint (based on q[i])
+        T_motion = np.eye(4)
+
+        if joint.joint_type in ["revolute", "continuous"]:
+            qi = q[q_idx] if q_idx < len(q) else 0.0  # Default to 0 if not enough angles provided
+            # Rotation using Rodrigues' formula on the joint axis
+            axis = np.array(joint.axis) / np.linalg.norm(joint.axis)            
+            # Coupling matrix by cross product
+            K = np.array([
+                [0, -axis[2], axis[1]],
+                [axis[2], 0, -axis[0]],
+                [-axis[1], axis[0], 0]
+            ])
+            # Rodrigues' formula for the 3x3 rotation matrix
+            R_motion = np.eye(3) + np.sin(qi) * K + (1 - np.cos(qi)) * (K @ K)
+            T_motion[:3, :3] = R_motion
+            q_idx += 1 # increase index for the next joint angle
+
+        elif joint.joint_type == "prismatic":
+            # Translation along the joint axis
+            qi = q[q_idx] if q_idx < len(q) else 0.0 # Default to 0 if not enough angles provided
+            axis = np.array(joint.axis) / np.linalg.norm(joint.axis)
+            T_motion[:3, 3] = axis * qi
+            q_idx += 1 # increase index for the next joint angle
+
+            #fixed joints do not contribute to motion, so T_motion remains identity
+        
+        # Accumulate the transformation with respect to the base of the robot
+        all_transforms.append(all_transforms[-1] @ T_urdf @ T_motion)
 
     return all_transforms
 
@@ -51,5 +75,5 @@ def forward_kinematics(robot: Robot, q: np.ndarray) -> np.ndarray:
     Computes the final transformation matrix by multiplying all joint transformations.
     Currently assumes a serial chain in the order defined in the URDF.
     """
-    all_transforms = forward_kinematics_full(robot, q)
+    all_transforms = compute_forward_kinematics_full(robot, q)
     return all_transforms[-1]
