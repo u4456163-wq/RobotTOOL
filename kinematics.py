@@ -1,4 +1,3 @@
-import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from typing import List, Tuple, Optional
 import numpy as np
@@ -44,7 +43,10 @@ def compute_forward_kinematics_full(robot: Robot, q: np.ndarray) -> List[np.ndar
         if joint.joint_type in ["revolute", "continuous"]:
             qi = q[q_idx] if q_idx < len(q) else 0.0  # Default to 0 if not enough angles provided
             # Rotation using Rodrigues' formula on the joint axis
-            axis = np.array(joint.axis) / np.linalg.norm(joint.axis)            
+            norm = np.linalg.norm(joint.axis)
+            if norm < 1e-8:
+                raise ValueError(f"Joint {joint.name} has an invalid axis with near-zero length.")
+            axis = np.array(joint.axis) / norm # only guard against zero-length axis, not against non-unit length, since we normalize it anyway
             # Coupling matrix by cross product
             K = np.array([
                 [0, -axis[2], axis[1]],
@@ -59,7 +61,10 @@ def compute_forward_kinematics_full(robot: Robot, q: np.ndarray) -> List[np.ndar
         elif joint.joint_type == "prismatic":
             # Translation along the joint axis
             qi = q[q_idx] if q_idx < len(q) else 0.0 # Default to 0 if not enough angles provided
-            axis = np.array(joint.axis) / np.linalg.norm(joint.axis)
+            norm = np.linalg.norm(joint.axis)
+            if norm < 1e-8:
+                raise ValueError(f"Joint {joint.name} has an invalid axis with near-zero length.")
+            axis = np.array(joint.axis) / norm # only guard against zero-length axis, not against non-unit length, since we normalize it anyway
             T_motion[:3, 3] = axis * qi
             q_idx += 1 # increase index for the next joint angle
 

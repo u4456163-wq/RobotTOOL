@@ -22,12 +22,13 @@ def main():
     q = np.zeros(n_active)
     jacobians = compute_jacobian(robot, q)
     J_analytic, J_numeric = validate_jacobian_numerically(robot, q)
-    
+
     print("Forward Kinematics Result (Transformation Matrix):")
     print(fk_result)
     print("\nJacobians:")
     print(jacobians)
     print("Max Jv error:", np.max(np.abs(J_analytic[:3] - J_numeric[:3])))
+    print("Max Jw error:", np.max(np.abs(J_analytic[3:] - J_numeric[3:])))
 
 if __name__ == "__main__":
     main()

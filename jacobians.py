@@ -51,18 +51,22 @@ def compute_jacobian(robot: Robot, q: np.ndarray) -> np.ndarray:
 def validate_jacobian_numerically(robot, q, eps=1e-6):
     """Finite difference check against analytic Jacobian."""
     J_analytic = compute_jacobian(robot, q)
-    active_index = [idx for idx, j in enumerate(robot.joints) if j.joint_type != "fixed"]
-    n = len(active_index)
+    n = J_analytic.shape[1]
     J_numeric = np.zeros((6, n))
 
     T0 = compute_forward_kinematics_full(robot, q)[-1]
     p0 = T0[:3, 3]
+    R0 = T0[:3, :3]
 
     for i in range(n):
         dq = q.copy()
         dq[i] += eps
         T1 = compute_forward_kinematics_full(robot, dq)[-1]
         p1 = T1[:3, 3]
-        J_numeric[:3, i] = (p1 - p0) / eps  # only Jv for now
+        R1 = T1[:3, :3]
+        J_numeric[:3, i] = (p1 - p0) / eps  # Velocity part from linear difference
+        dR = R1 @ R0.T
+        # Extract the angular velocity from the rotation difference using the logarithm map
+        J_numeric[3:,i] = np.array([dR[2,1]-dR[1,2], dR[0,2]-dR[2,0], dR[1,0]-dR[0,1]]) / (2 * eps)
 
     return J_analytic, J_numeric
