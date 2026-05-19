@@ -12,17 +12,17 @@ class URDFParser:
     def parse(self, file_path: str) -> Robot:
         """Parses a URDF file and return a Robot object model."""
         
-        # 1. Construir la ruta buscando en 'models_robot'
+        # 1. Build the path by searching in 'models_robot'
         base_path = Path(__file__).parent / "models_robot"
         full_path = base_path / file_path
 
-        # 2. Verificar si existe, si no, intentar usar la ruta tal cual se recibió
+        # 2. Verify if it exists, if not, try to use the path as received
         if not full_path.exists():
             full_path = Path(file_path)
             if not full_path.exists():
                 raise FileNotFoundError(f"The URDF file was not found: {full_path}")
 
-        # 3. Ahora sí, parsear el archivo una sola vez
+        # 3. Now parse the file only once
         tree = ET.parse(str(full_path))
         root = tree.getroot()
 
