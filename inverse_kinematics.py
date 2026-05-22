@@ -5,7 +5,12 @@ from models import Robot
 
 def inverse_kinematics(robot: Robot, target_pos: np.ndarray, initial_guess: np.ndarray, max_iterations: int = 1000, tolerance: float = 1e-6) -> np.ndarray:
     q = initial_guess.copy()
-    
+    revolute_mask = np.array([
+            joint.joint_type in ["revolute", "continuous"]
+            for joint in robot.joints
+            if joint.joint_type != "fixed"
+        ], dtype=bool)
+
     for i in range(max_iterations):
         # 1. Get all the transformations and extract the position [x, y, z] from the end
         all_transforms = compute_forward_kinematics_full(robot, q)
@@ -29,11 +34,11 @@ def inverse_kinematics(robot: Robot, target_pos: np.ndarray, initial_guess: np.n
         # Limit step size to avoid explosions in singularities
         max_step = 0.2 # two tenths of a radian or meter per iteration
         step_norm = np.linalg.norm(delta_q)
-        if step_norm > max_step:
-            delta_q = (delta_q / step_norm) * max_step
-        
+        if step_norm > 0.2:
+            delta_q = delta_q * (0.2 / step_norm)
+
         # 5. Update and normalize the joint angles
         q += delta_q
-        q = np.mod(q + np.pi, 2 * np.pi) - np.pi  # Normalize to [-pi, pi]
-    
+        q[revolute_mask] = np.mod(q[revolute_mask] + np.pi, 2 * np.pi) - np.pi  # Normalize to [-pi, pi]
+    print(f"Warning: IK did not converge after {max_iterations} iterations.")
     return q
