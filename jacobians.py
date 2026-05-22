@@ -1,5 +1,5 @@
 import numpy as np
-from models import Robot, Joint
+from models import Robot
 from kinematics import compute_forward_kinematics_full
 
 def compute_jacobian(robot: Robot, q: np.ndarray) -> np.ndarray:
