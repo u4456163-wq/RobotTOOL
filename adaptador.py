@@ -17,7 +17,7 @@ if __name__ == "__main__":
     except ImportError:
         print("\n[ERROR] Could not find FreeCAD library.")
         print(f"Current route attempted: '{DOCKER_FREECAD_PATH}'")
-        print("👉 If you are running this natively, please edit the 'DOCKER_FREECAD_PATH' variable or add FreeCAD to your PYTHONPATH.\n")
+        print(" If you are running this natively, please edit the 'DOCKER_FREECAD_PATH' variable or add FreeCAD to your PYTHONPATH.\n")
         sys.exit(1)
 
     print("=== Docker & FreeCAD Environment Verified ===")
